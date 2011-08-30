@@ -244,7 +244,6 @@ void Display::set(int idx, uint8_t value)
         case '7': buf[0] = 0x00; buf[1] = 0x00; break;
         case '8': buf[0] = 0x4f; buf[1] = 0x02; break;
         case '9': buf[0] = 0x4b; buf[1] = 0x02; break;
-        case '-': buf[0] = 0x00; buf[1] = 0x10; break;
         case '<': buf[0] = 0x43; buf[1] = 0x10; break;
         case '=': buf[0] = 0x43; buf[1] = 0x02; break;
         case '>': buf[0] = 0x83; buf[1] = 0x20; break;
