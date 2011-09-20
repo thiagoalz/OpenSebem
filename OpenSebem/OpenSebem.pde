@@ -7,10 +7,13 @@
 //Teclas
 #define OPB_LIGA 'v'
 #define OPB_DESLIGA 'c'
+#define OPB_LIVRO 'x'
+#define OPB_ENTER 'z'
 
 //Estados
 #define OPB_EST_OFF 0
 #define OPB_EST_ON 1
+#define OPB_EST_LIVRO 2
 
 int estado=0;
 
@@ -55,6 +58,9 @@ void loop() {
    case OPB_EST_ON:
      estado_ligado();
      break;
+   case OPB_EST_LIVRO:
+     estado_livro();
+     break;
   }
 }
 
@@ -91,11 +97,14 @@ void estado_ligado(){
   pisca('-','.',500);
   
   //Verifica Teclas
-  char c;
   while(estado==OPB_EST_ON){
-    c = teclado.readKey();
+    char c = teclado.readKey();
     
-    switch(c){       
+    switch(c){
+      case OPB_LIVRO:
+        estado=OPB_EST_LIVRO;
+        break;
+        
       case OPB_DESLIGA:
         estado=OPB_EST_OFF;
         break;
@@ -105,6 +114,47 @@ void estado_ligado(){
         break;
     }
   }
+}
+
+void estado_livro(){
+  sound.playMelody(sound.GameSelectedMelody,3);
+  pisca('-','.',500);
+  
+  int livro=00;
+  //Verifica Teclas
+  while(estado==OPB_EST_LIVRO){
+    char c = teclado.readKey();
+    
+    //Ver se  numero
+    //sound.playMelody(sound.HighBeepMelody,1);
+    //Se for adiciona numa lista circular (2 pos)
+    //Se nao for, roda o switch
+    
+    switch(c){
+      case OPB_ENTER:
+        if(livro>0){
+          runLivro(livro);
+        }else{
+          sound.playMelody(sound.LowBeepMelody,1);
+        }
+        break;
+        
+      case OPB_DESLIGA:
+        estado=OPB_EST_OFF;
+        break;
+        
+      default:
+        sound.playMelody(sound.LowBeepMelody,1);
+        break;
+    }
+  }
+}
+
+void runLivro(int livro){
+  //Mostra questao
+  //Le resposta
+  //compara resposta
+  //emite som
 }
 
 ///////////////////////////////////
