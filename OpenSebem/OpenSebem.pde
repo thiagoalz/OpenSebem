@@ -3,12 +3,18 @@
 #include "OpenSebemSound.h"
 #include "pitches.h"
 #include "Display.h"
+#include <ctype.h>
 
 //Teclas
 #define OPB_LIGA 'v'
 #define OPB_DESLIGA 'c'
 #define OPB_LIVRO 'x'
 #define OPB_ENTER 'z'
+
+#define OPB_A 'a'
+#define OPB_B 's'
+#define OPB_C 'd'
+#define OPB_D 'f'
 
 //Estados
 #define OPB_EST_OFF 0
@@ -120,43 +126,148 @@ void estado_livro(){
   sound.playMelody(sound.GameSelectedMelody,3);
   pisca('-','.',500);
   
-  int livro=00;
+  int livro[2]={0,0};
+  int indexLivro=1;
   //Verifica Teclas
   while(estado==OPB_EST_LIVRO){
     char c = teclado.readKey();
     
-    //Ver se  numero
-    //sound.playMelody(sound.HighBeepMelody,1);
-    //Se for adiciona numa lista circular (2 pos)
-    //Se nao for, roda o switch
-    
-    switch(c){
-      case OPB_ENTER:
-        if(livro>0){
-          runLivro(livro);
-        }else{
+    //Se for um numero
+    if (isdigit(c)){
+      sound.playMelody(sound.HighBeepMelody,1);
+      livro[indexLivro]=atoi(&c);
+      
+      indexLivro=(indexLivro+1)%2;
+    }else{
+      int valorLivro=livro[1]+(livro[0]*10);
+      
+      switch(c){
+        case OPB_ENTER:
+          if(valorLivro>0){
+            sound.playMelody(sound.HighBeepMelody,1);
+            runLivro(valorLivro);
+          }else{
+            sound.playMelody(sound.LowBeepMelody,1);
+          }
+          break;
+          
+        case OPB_DESLIGA:
+          estado=OPB_EST_OFF;
+          break;
+          
+        default:
           sound.playMelody(sound.LowBeepMelody,1);
-        }
-        break;
-        
-      case OPB_DESLIGA:
-        estado=OPB_EST_OFF;
-        break;
-        
-      default:
-        sound.playMelody(sound.LowBeepMelody,1);
-        break;
+          break;
+      }
     }
   }
 }
 
 void runLivro(int livro){
-  //Mostra questao
-  //Le resposta
-  //compara resposta
-  //emite som
+  
+  int bookNumber = livro / 10;
+  int sectionNumber = livro % 10;
+  
+  int maxQuestion = sectionNumber * 30;
+  int currentQuestion = maxQuestion - 30;
+  
+  int answeredQuestions = 0;
+  int points = 0;
+  
+  dsp.set(0, '.');
+  dsp.set(1, '.');
+  dsp.update();
+  
+  sound.playMelody(sound.CorrectMelody,3);
+  
+  while(currentQuestion<=maxQuestion && estado==OPB_EST_LIVRO){
+    int tentativas=leQuestao(bookNumber, currentQuestion);
+    answeredQuestions++;
+    currentQuestion++;
+    points += pointsByNumberOfTries(tentativas);
+  }
 }
 
+
+int leQuestao(int book, int questao){
+  int tries=0;
+  char buffer [2];
+  itoa(questao, buffer, 10);
+  
+  dsp.set(0, buffer[0]);
+  dsp.set(1, buffer[1]);
+  dsp.update();
+  
+  while(true){
+   char c = teclado.readKey();
+  
+    switch(c){
+     case OPB_A:
+     case OPB_B:
+     case OPB_C:
+     case OPB_D:
+       if (getCorrectAnswer(book, questao) == c) {
+          sound.playMelody(sound.CorrectMelody,3);
+          
+          return tries;
+        }
+        
+        tries++;
+        if (tries >= 3) {
+          sound.playMelody(sound.FailMelody,4);
+          return tries;
+        } else {
+          sound.playMelody(sound.WrongMelody,2);
+        }
+        break;
+        
+     case OPB_DESLIGA:
+       estado=OPB_EST_OFF;
+       return 4;
+       break;
+     
+     default:
+       sound.playMelody(sound.LowBeepMelody,1);
+     break;
+    } 
+  }
+}
+
+char getCorrectAnswer(int book, int questao){
+  char array[]= {'CDDBAADCBDAADCBB'};
+  char resposta = array[(book + questao) & 15];
+  
+  switch(resposta){
+   case 'A':
+     resposta = OPB_A;
+     break;
+   case 'B':
+     resposta = OPB_B;
+     break;
+   case 'C':
+     resposta = OPB_C;
+     break;
+   case 'D':
+     resposta = OPB_D;
+     break;
+  }
+  
+  return resposta;
+}
+
+int pointsByNumberOfTries(int tentativas){
+  switch (tentativas) {
+        case 0:
+            return 10;
+        case 1:
+            return 6;
+        case 2:
+            return 4;
+            
+        default:
+            return 0;
+   }            
+}
 ///////////////////////////////////
 void pisca(char value, char after,int time){
   dsp.set(0, value);
