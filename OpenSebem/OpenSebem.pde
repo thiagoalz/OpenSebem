@@ -4,7 +4,17 @@
 #include "pitches.h"
 #include "Display.h"
 
-const int SoundPin = 6;
+//Teclas
+#define OPB_LIGA 'v'
+#define OPB_DESLIGA 'c'
+
+//Estados
+#define OPB_EST_OFF 0
+#define OPB_EST_ON 1
+
+int estado=0;
+
+const int SoundPin = 7;
 OpenSebemSound sound;
 
 
@@ -15,7 +25,7 @@ OpenSebemTeclado teclado;
 
 // Configuration for display (can not be modified at runtime! The Display class will keep referencing this array)
 // Os itens do seu display. (Nao alterar durante a execucao)
-int dsp_cfg[] = { DSP_7SEGINV,  DSP_LED, DSP_7SEGINV }; //Adicione neste vetor os componentes do seu display. As opcoes sao: DSP_7SEG, DSP_7SEGINV, DSP_ALPHA, DSP_LED, DSP_M5X7:
+int dsp_cfg[] = { DSP_7SEGINV, DSP_7SEGINV, DSP_LED, DSP_LED, DSP_LED, DSP_ALPHA, DSP_7SEGINV, DSP_LED, DSP_LED, DSP_7SEGINV, DSP_7SEGINV, DSP_7SEGINV }; //Adicione neste vetor os componentes do seu display. As opcoes sao: DSP_7SEG, DSP_7SEGINV, DSP_ALPHA, DSP_LED, DSP_M5X7:
 int dsp_len = sizeof(dsp_cfg) / sizeof(int);
 
 /**
@@ -33,12 +43,77 @@ void setup() {
   teclado.setup(DataPin,IRQpin);
   sound.setup(SoundPin);
   
-  sound.playMelody(sound.WelcomeMelody,5);  
+  Serial.begin(9600);
 }
 
 void loop() {
-  char c = teclado.readKey(); 
+  //estado_desligado();
+  switch(estado){
+   case OPB_EST_OFF:
+     estado_desligado();
+     break;
+   case OPB_EST_ON:
+     estado_ligado();
+     break;
+  }
+}
+
+void estado_desligado(){
+  //Zerando Displays
+  for(int i=0; i<dsp_len; i++){
+    dsp.set(i, ' ');
+  }
+  dsp.update();
   
-  dsp.set(0, c);
+  //Espera Ligar
+  char c = teclado.readKey();
+  while(c != OPB_LIGA){
+    c = teclado.readKey();
+  }
+  
+  estado=OPB_EST_ON;
+}
+
+void estado_ligado(){
+  dsp.set(0, '-');
+  dsp.set(1, '-');
+  dsp.update();
+  
+  sound.playMelody(sound.WelcomeMelody,5);
+  
+  dsp.set(0, ' ');
+  dsp.set(1, ' ');
+  dsp.update();
+  delay(500);
+  
+  pisca('-',' ',500);
+  delay(500);
+  pisca('-','.',500);
+  
+  //Verifica Teclas
+  char c;
+  while(estado==OPB_EST_ON){
+    c = teclado.readKey();
+    
+    switch(c){       
+      case OPB_DESLIGA:
+        estado=OPB_EST_OFF;
+        break;
+        
+      default:
+        sound.playMelody(sound.LowBeepMelody,1);
+        break;
+    }
+  }
+}
+
+///////////////////////////////////
+void pisca(char value, char after,int time){
+  dsp.set(0, value);
+  dsp.set(1, value);
+  dsp.update();
+  delay(time);
+  dsp.set(0, after);
+  dsp.set(1, after);
   dsp.update();
 }
