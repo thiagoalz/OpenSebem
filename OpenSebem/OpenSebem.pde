@@ -124,10 +124,11 @@ void estado_ligado(){
 
 void estado_livro(){
   sound.playMelody(sound.GameSelectedMelody,3);
-  pisca('-','.',500);
+  pisca('-','0',500);
   
   int livro[2]={0,0};
   int indexLivro=1;
+  
   //Verifica Teclas
   while(estado==OPB_EST_LIVRO){
     char c = teclado.readKey();
@@ -136,6 +137,8 @@ void estado_livro(){
     if (isdigit(c)){
       sound.playMelody(sound.HighBeepMelody,1);
       livro[indexLivro]=atoi(&c);
+      dsp.set(indexLivro, c);
+      dsp.update();
       
       indexLivro=(indexLivro+1)%2;
     }else{
@@ -146,6 +149,7 @@ void estado_livro(){
           if(valorLivro>0){
             sound.playMelody(sound.HighBeepMelody,1);
             runLivro(valorLivro);
+            estado=OPB_EST_ON;
           }else{
             sound.playMelody(sound.LowBeepMelody,1);
           }
@@ -169,7 +173,7 @@ void runLivro(int livro){
   int sectionNumber = livro % 10;
   
   int maxQuestion = sectionNumber * 30;
-  int currentQuestion = maxQuestion - 30;
+  int currentQuestion = maxQuestion - 29;
   
   int answeredQuestions = 0;
   int points = 0;
@@ -191,7 +195,7 @@ void runLivro(int livro){
 
 int leQuestao(int book, int questao){
   int tries=0;
-  char buffer [2];
+  char buffer [3];
   itoa(questao, buffer, 10);
   
   dsp.set(0, buffer[0]);
@@ -234,8 +238,8 @@ int leQuestao(int book, int questao){
 }
 
 char getCorrectAnswer(int book, int questao){
-  char array[]= {'CDDBAADCBDAADCBB'};
-  char resposta = array[(book + questao) & 15];
+  char array[]= {"CDDBAADCBDAADCBB"};
+  char resposta = array[(book + questao) % 16];
   
   switch(resposta){
    case 'A':
