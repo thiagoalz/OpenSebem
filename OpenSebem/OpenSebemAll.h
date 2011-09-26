@@ -44,28 +44,48 @@
 
 class Activity{
     public:
-    Activity();
-    virtual void reset();
-    virtual void oneLoopIteration();
-    virtual void buttonPress(char b);
+        Activity();
+        virtual void reset();
+        virtual void oneLoopIteration();
+        virtual void buttonPress(char b);
 };
 //------------------------------------------------------------------------------
 
 class Welcome: public Activity{
     public:
-    Welcome();
-    virtual void reset();
-    virtual void oneLoopIteration();
-    virtual void buttonPress(char b);
+        Welcome();
+        virtual void reset();
+        virtual void oneLoopIteration();
+        virtual void buttonPress(char b);
 };
 //------------------------------------------------------------------------------
 
 class Standby: public Activity{
     public:
-    Standby();
-    virtual void reset();
-    virtual void oneLoopIteration();
-    virtual void buttonPress(char b);
+        Standby();
+        virtual void reset();
+        virtual void oneLoopIteration();
+        virtual void buttonPress(char b);
+};
+//------------------------------------------------------------------------------
+
+class Prompt: public Activity{
+    public:
+        Prompt();
+        virtual void reset();
+        virtual void oneLoopIteration();
+        virtual void buttonPress(char b);
+
+        char *getInput();
+        bool isEmpty();
+        void redrawPrompt();
+
+    private:
+        int maxDigitSize;
+        int initialDigit;
+        bool done;
+        char promptCharacter;
+        char *input;
 };
 //------------------------------------------------------------------------------
 

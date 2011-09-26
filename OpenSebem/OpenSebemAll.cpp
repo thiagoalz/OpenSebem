@@ -18,6 +18,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <inttypes.h>
+#include <string.h>
 
 #include "OpenSebemAll.h"
 
@@ -78,7 +79,7 @@ void Welcome::buttonPress(char b){
 
 Standby::Standby(){
 
-} 
+}
 
 void Standby::reset(){
     //Display.clear();
@@ -89,6 +90,87 @@ void Standby::oneLoopIteration(){
 }
 
 void Standby::buttonPress(char b){
+}
+//------------------------------------------------------------------------------
+
+Prompt::Prompt(){
+    this->maxDigitSize = 3;
+    this->initialDigit = 7;
+    this->done = false;
+    this->promptCharacter = '-';
+}
+
+void Prompt::reset(){
+    this->done = false;
+    this->input = "   ";
+    //TODO:
+    //Display.clear(Prompt.initialDigit - Prompt.maxDigitSize + 1, Prompt.initialDigit);
+    if (this->initialDigit == 4 && this->maxDigitSize == 2) {
+        //Display.setSpecialDigit(' ');
+        //Display.setSpecialDigit2(' ');
+        //Display.blinkSpecialDigit(this->promptCharacter);
+    } else {
+        //Display.blinkDigit(this->initialDigit, this->promptCharacter);
+    }
+}
+
+char *Prompt::getInput(){
+    char *value = this->input;
+    this->reset();
+    return value;
+}
+
+bool Prompt::isEmpty(){
+    return ( strcmp(this->input,"   ") == 0 );
+}
+
+void Prompt::oneLoopIteration(){
+}
+
+void Prompt::redrawPrompt(){
+    //Display.showNumberAtDigit(this->input, this->initialDigit);
+}
+
+void Prompt::buttonPress(char b){
+    if (b == OPB_ENTER) {
+        if (this->isEmpty()) {
+            //TODO:
+            //Som.highBeep();
+            return;
+        }
+        this->done = true;
+        //PB.activity = PB.previousActivity;
+        return;
+    }
+
+    char* numbers = "0123456789";
+    if (strchr(numbers, 'b') != NULL) {
+        //Som.lowBeep();
+        //Display.disableBlink();
+        if (this->initialDigit == 4 && this->maxDigitSize == 2) {
+            //Display.setSpecialDigit('~');
+            //Display.setSpecialDigit2('-');
+        }
+        switch (this->maxDigitSize) {
+            case 1:
+                //TODO:
+                //this->input = b;
+                break;
+            case 2:
+                //TODO:
+                //this->input = this->input[1] + b;
+                break;
+            default:
+                //TODO:
+                //this->input = this->input[1] + this->input[2] + b;
+                break;
+        }
+        this->redrawPrompt();
+    } else {
+        //TODO:
+        //blink and HighBeep
+        //Som.highBeep();
+    }
 }
 //------------------------------------------------------------------------------
 
@@ -107,15 +189,12 @@ OpenSebem::OpenSebem() {
 
 
 void OpenSebem::init(){
-    //this->setActivity(Standby);
+    this->setActivity(STANDBY);
     this->reset();
     //TODO:
     //setInterval(this->oneLoopIteration, 100);
     //this->turnOnReminderTimer = setTimeout(this->showReminder, 3000);
 }
-
-//void OpenSebem::showReminder(){
-//}
 
 void OpenSebem::resetDefaultVariables(){
     //TODO:
