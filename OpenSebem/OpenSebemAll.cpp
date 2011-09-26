@@ -189,7 +189,7 @@ OpenSebem::OpenSebem() {
 
 
 void OpenSebem::init(){
-    this->setActivity(STANDBY);
+    this->setActivity(STANDBY, false);
     this->reset();
     //TODO:
     //setInterval(this->oneLoopIteration, 100);
@@ -246,9 +246,9 @@ void OpenSebem::prompt(int initialDigit, int maxDigitSize, char promptCharacter)
     //TODO: Definir prompt na inicialização. (pretendo definir todas as atividades assim.
     //TODO: Verificar como essa funcao esta sendo utilizada no resto da aplicação para definir como tratar essa atribuicao condicional.
     //Provavelmente vou deixar sem
-    PROMPT.initialDigit = initialDigit || 7;
-    PROMPT.maxDigitSize = maxDigitSize || 3;
-    PROMPT.promptCharacter = promptCharacter || '-';
+    PROMPT->initialDigit = initialDigit || 7;
+    PROMPT->maxDigitSize = maxDigitSize || 3;
+    PROMPT->promptCharacter = promptCharacter || '-';
     this->previousActivity = this->activity;
     this->setActivity(PROMPT, true);
 }
@@ -257,10 +257,10 @@ void OpenSebem::buttonPress(char b){
     //TODO: Definir WELCOME e STANDBY na inicialização. (pretendo definir todas as atividades assim.
     switch (b) {
     case OPB_LIGA:
-        this->setActivity(WELCOME);
+        this->setActivity(WELCOME, false);
         return;
     case OPB_DESLIGA:
-        this->setActivity(STANDBY);
+        this->setActivity(STANDBY, false);
         return;
     default:
         if (this->keyboardEnabled && (this->activity != NULL)) {

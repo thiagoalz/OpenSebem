@@ -79,12 +79,14 @@ class Prompt: public Activity{
         char *getInput();
         bool isEmpty();
         void redrawPrompt();
-
-    private:
+        
         int maxDigitSize;
         int initialDigit;
-        bool done;
         char promptCharacter;
+
+    private:
+        
+        bool done;        
         char *input;
 };
 //------------------------------------------------------------------------------
@@ -138,6 +140,11 @@ class OpenSebem {
     int ticks;
     //delayTable: {},
     bool keyboardEnabled;
+    
+    //Atividades
+    Standby *STANDBY;
+    Welcome *WELCOME;
+    Prompt *PROMPT;
 };
 
 #endif
