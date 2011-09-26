@@ -22,7 +22,9 @@
 #define OpenSebemAll_h
 
 #include <inttypes.h>
-
+#include <WProgram.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 //Teclas
 #define OPB_LIGA 'v'
@@ -35,28 +37,36 @@
 #define OPB_C 'd'
 #define OPB_D 'f'
 
+//Estados
+//#define OPB_EST_OFF 0
+//#define OPB_EST_ON 1
+//#define OPB_EST_LIVRO 2
+
 class Activity{
     public:
+    Activity();
     virtual void reset();
     virtual void oneLoopIteration();
     virtual void buttonPress(char b);
-}
+};
 //------------------------------------------------------------------------------
 
 class Welcome: public Activity{
     public:
+    Welcome();
     virtual void reset();
     virtual void oneLoopIteration();
     virtual void buttonPress(char b);
-}
+};
 //------------------------------------------------------------------------------
 
 class Standby: public Activity{
     public:
+    Standby();
     virtual void reset();
     virtual void oneLoopIteration();
     virtual void buttonPress(char b);
-}
+};
 //------------------------------------------------------------------------------
 
 /**
@@ -71,7 +81,7 @@ class OpenSebem {
      */
     OpenSebem();
 
-	void init();
+    void init();
         
     void showReminder();
 
@@ -83,9 +93,9 @@ class OpenSebem {
         
     void oneLoopIteration();
         
-    void setActivity(Activity m, bool keepScreenContents);
+    void setActivity(Activity *m, bool keepScreenContents);
        
-    void prompt(int initialDigit, int maxDigitSize, int promptCharacter);
+    void prompt(int initialDigit, int maxDigitSize, char promptCharacter);
         
     void buttonPress(char b);
         
@@ -93,7 +103,7 @@ class OpenSebem {
         
     void disableKeyboard();
         
-    void pointsByNumberOfTries(int t);
+    int pointsByNumberOfTries(int t);
 
     /**
      * Setup pins.
@@ -103,7 +113,8 @@ class OpenSebem {
   private:
     bool bugfix;
     /* we are simulating all the bugs from the original machine */
-    int activity;// null,
+    Activity *activity;
+    Activity *previousActivity;
     int ticks;
     //delayTable: {},
     bool keyboardEnabled;

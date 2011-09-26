@@ -5,23 +5,7 @@
 #include "Display.h"
 #include <ctype.h>
 
-#include "OpenSebemAll.h"
-
-//Teclas
-#define OPB_LIGA 'v'
-#define OPB_DESLIGA 'c'
-#define OPB_LIVRO 'x'
-#define OPB_ENTER 'z'
-
-#define OPB_A 'a'
-#define OPB_B 's'
-#define OPB_C 'd'
-#define OPB_D 'f'
-
-//Estados
-#define OPB_EST_OFF 0
-#define OPB_EST_ON 1
-#define OPB_EST_LIVRO 2
+//#include "OpenSebemAll.h"
 
 int estado=0;
 
@@ -32,7 +16,7 @@ OpenSebemSound sound;
 const int DataPin = 4;
 const int IRQpin =  3;
 OpenSebemTeclado teclado;
-OpenSebem PB;
+//OpenSebem PB;
 
 
 // Configuration for display (can not be modified at runtime! The Display class will keep referencing this array)

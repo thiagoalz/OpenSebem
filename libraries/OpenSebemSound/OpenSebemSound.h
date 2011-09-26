@@ -47,14 +47,14 @@ class OpenSebemSound {
     void playMelody(int song[], int lengh);
 
 	///////
-	static int WelcomeMelody[];
-	static int GameSelectedMelody[];
-	static int CorrectMelody[];
-	static int WrongMelody[];
-	static int FailMelody[];
-	static int WinnerMelody[];
-	static int HighBeepMelody[];
-	static int LowBeepMelody[];
+    static int WelcomeMelody[];
+    static int GameSelectedMelody[];
+    static int CorrectMelody[];
+    static int WrongMelody[];
+    static int FailMelody[];
+    static int WinnerMelody[];
+    static int HighBeepMelody[];
+    static int LowBeepMelody[];
 
   private:
     uint8_t _pin;
